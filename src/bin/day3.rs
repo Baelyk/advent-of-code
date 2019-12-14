@@ -6,19 +6,22 @@ use advent_of_code::input;
 fn main() {
     let input = input::read_file_to_string("input/day3");
 
-    // # Part 1
-    let red_path: Vec<day3::Pathlet>;
-    let green_path: Vec<day3::Pathlet>;
     let mut wires = input.lines();
-    red_path = day3::string_to_path(wires.next().unwrap());
-    green_path = day3::string_to_path(wires.next().unwrap());
+    let red_path = day3::string_to_path(wires.next().unwrap());
+    let green_path = day3::string_to_path(wires.next().unwrap());
     let red = day3::trace_wire(red_path);
     let green = day3::trace_wire(green_path);
-    println!(
-        "{}",
-        day3::manhattan_distance(
-            day3::Point::Origin(),
-            *red.intersection(&green).next().unwrap()
-        )
-    );
+    let intersections = day3::wire_intersections(&red, &green);
+
+    // # Part 1
+    let closest = intersections.iter().map(|x| x.distance()).min().unwrap();
+    println!("{}", closest);
+
+    // # Part 2
+    let shortest = intersections
+        .iter()
+        .map(|x| day3::wire_length_to(&red, x) + day3::wire_length_to(&green, x))
+        .min()
+        .unwrap();
+    println!("{}", shortest);
 }
